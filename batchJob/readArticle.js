@@ -119,7 +119,7 @@ module.exports = () => {
 
 
     var job = new CronJob({
-        cronTime: '00 */1 * * * *',
+        cronTime: '00 */10 * * * *',
         onTick: function () {
 
             console.log("Next Run: ", this.nextDates() );
