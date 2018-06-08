@@ -33,11 +33,11 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.get('/', (req, res, next) => {
+router.get('/:active', (req, res, next) => {
 
     let active=true;
-    if(req.body.Active!==undefined)
-        active = req.body.Active;
+    if(req.params.active!==undefined)
+        active = req.params.active;
 
     const promise = Source.find({ Active: active }).sort({ SourceName: 1 });
 
