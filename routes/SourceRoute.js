@@ -35,7 +35,11 @@ router.post('/', (req, res, next) => {
 
 router.get('/', (req, res, next) => {
 
-    const promise = Source.find({ Active: true }).sort({ SourceName: 1 });
+    let active=true;
+    if(req.body.Active!==undefined)
+        active = req.body.Active;
+
+    const promise = Source.find({ Active: active }).sort({ SourceName: 1 });
 
     promise.then((data) => {
         if (data.length===0) {
