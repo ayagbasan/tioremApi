@@ -12,8 +12,7 @@ var ArticleSchema = new Schema(
             required:true
           },
         SourceId :{
-            type:mongoose.Schema.Types.ObjectId,
-            ref: 'Source',
+            type: Number,
             required: [true, '`{PATH}` is required.']
         },
         CategoryId:{
@@ -23,8 +22,8 @@ var ArticleSchema = new Schema(
         Tags: [TagSchema.schema],
         ArticleUrl:{
             type: String,
-            required: [true, '`{PATH}` is required.'],
-            minlength: [3, '`The minimum length of {PATH}` field must be greater then {MINLENGTH} characters.']
+            // required: [true, '`{PATH}` is required.'],
+            // minlength: [3, '`The minimum length of {PATH}` field must be greater then {MINLENGTH} characters.']
           },
         SourceUrl:{
             type: String,

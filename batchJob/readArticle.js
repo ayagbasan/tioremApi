@@ -1,132 +1,176 @@
 const CronJob = require('cron').CronJob;
-const request = require('request');
 const xml2js = require('xml2js');
-const mongoose = require("mongoose");
 const Article = require('../models/Article');
 const Source = require('../models/Catalogue/Source');
 const logger = require('../helper/logger');
 const klas = "Batch Jobs - Read Article";
+const config = require('../config');
+const request = require('request-promise');
+const mongoose = require("mongoose");
 
 module.exports = () => {
-    
-    var readData = function () { 
-        console.log('job Running');
+
+    let readData = function () {
+
+        console.log('job Running', config.environment);
 
         logger.addLog(klas, "Job started", "Read article jobs started");
 
 
-        const parser = new xml2js.Parser({ explicitArray: false });
-        const promise = Source.find({ Active: true });
+        const parser = new xml2js.Parser({explicitArray: false});
+        const promise = Source.find({Active: true});
 
-        let totalSource = 0;
-        let currentSource = 0;
+        const urls = [];
+
         promise.then((data) => {
-            totalSource = data.length;
 
-            if(totalSource===0)
-            {
-                logger.addLog(klas, "Local sources cannot find", "No any local sources ");
-                return;
-            }
             data.forEach(source => {
+                urls.push("http://nabizapp.com/app/v1.3/android_articles_by_source.php?source_id=" + source.SourceId);
+            });
 
-                request("https://nabizapp.com/app/v1.3/android_articles_by_source.php?source_id=" + source.SourceId, function (error, response, body) {
-                    //console.log('error:', error); // Print the error if one occurred
-                    //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-                    //console.log('body:', body); // Print the HTML for the Google homepage.
+            const promises = urls.map(url => request(url));
+            Promise.all(promises).then((xmlData) => {
+                let readArticles = [];
+                console.log("Download bitti");
 
-                    if (response.statusCode === 200) {
+                for (let i = 0; i < xmlData.length; i++) {
+                    parser.parseString(xmlData[i], function (err, result) {
 
-                        parser.parseString(body, function (err, result) {
+                        if (!err) {
+                            for (let j = 0; j < result.xml.articles.article.length; j++) {
+                                let item = result.xml.articles.article[i];
+                                if (item.sourceId !== undefined && item.articleId != undefined) {
+                                    readArticles.push(result.xml.articles.article[j]);
+                                } else {
+                                    logger.addLog(klas, "Article ID not found", "Article : " + JSON.stringify(item));
 
-
-                            if (!err) {
-                                result.xml.articles.article.forEach(element => {
-
-                                    if (element.sourceId != undefined) {
-
-                                        let s =
-                                            {
-                                                _id: new mongoose.Types.ObjectId(),
-                                                ArticleId: element.articleId,
-                                                SourceId: source._id,
-                                                CategoryId: null,
-                                                Tags: [],
-                                                ArticleUrl: element.articleUrl,
-                                                SourceUrl: element.articleUrl,
-                                                Title: element.articleTitle,
-                                                SharingTitle: element.articleSharingTitle,
-                                                Body: element.articleBody,
-                                                PubDate: element.articlePubDate,
-                                                DetailedDate: element.articleDetailedDate,
-                                                VideoUrl: element.articleVideoUrl,
-                                                ImageUrl: element.articleImageUrl,
-                                                UpdatedAt: null,
-                                                Approved: "Waiting Approve",
-                                                ApprovedUserId: null,
-                                                ApprovedAt: null
-                                            };
-
-                                        delete s._id;
-
-                                        var modelDoc = new Article(s);
-
-                                        Article.findOneAndUpdate(
-                                            { ArticleId: s.ArticleId }, // find a document with that filter
-                                            modelDoc, // document to insert when nothing was found
-                                            { upsert: true, new: true, runValidators: true }, // options
-                                            function (err, doc) { // callback
-                                                if (err) {
-                                                    logger.addLog(klas, "Article not saved", "Source Id:" + source.SourceId + " Article Id:" + s.ArticleId + " - " + err);
-                                                } else {
-                                                    //console.log("article upserted");
-                                                }
-                                            }
-                                        );
-                                    }
-                                    else {
-                                        //logger.addLog(klas, "Article ID not found", "Article : " + JSON.stringify(element));
-                                    }
-
-                                });
-                            } else {
-                                logger.addLog(klas, "Article can not parse", "XML body : " + body);
+                                }
                             }
-
-                        });
-
-                        console.log(source.SourceId, " Bitti");
-
-                        logger.addLog(klas, "Source read and saved", "Source Name : " + source.SourceName);
-                        currentSource++;
-                        if (currentSource === totalSource) {
-                            logger.addLog(klas, "Job completed", "Job completed");
+                        } else {
+                            logger.addLog(klas, "Article can not parse", "XML body : " + body);
+                            console.log(klas, "Article can not parse", "XML body : " + body);
                         }
-                    } else {
-                        logger.addLog(klas, "Source can not read from remote", "Http Response : " + response);
+                    });
+                }
 
+
+                return readArticles;
+
+            }).then((list) => {
+
+
+                let articles = [];
+                for (let i = 0; i < list.length; i++) {
+
+                    if (list[i].articleId !== undefined) {
+
+
+                        let tmp =
+                            {
+                                _id: new mongoose.Types.ObjectId(),
+                                ArticleId: parseInt(list[i].articleId),
+                                SourceId: parseInt(list[i].sourceId),
+                                CategoryId: null,
+                                Tags: [],
+                                ArticleUrl: list[i].articleUrl,
+                                SourceUrl: list[i].sourceUrl,
+                                Title: list[i].articleTitle,
+                                SharingTitle: list[i].articleSharingTitle,
+                                Body: list[i].articleBody,
+                                PubDate: list[i].articlePubDate,
+                                DetailedDate: list[i].articleDetailedDate,
+                                VideoUrl: list[i].articleVideoUrl,
+                                ImageUrl: list[i].articleImageUrl,
+                                UpdatedAt: null,
+                                Approved: "Waiting Approve",
+                                ApprovedUserId: null,
+                                ApprovedAt: null
+                            };
+
+                        articles.push(tmp);
+
+                        // let query = {ArticleId: tmp.ArticleId},
+                        //     update = tmp,
+                        //     options = {upsert: true, new: true, setDefaultsOnInsert: true};
+
+
+                        // Article.findOneAndUpdate(query, update, options, function (error, result) {
+                        //     if (error) {
+                        //         console.log(i);
+                        //     } else {
+                        //         count++;
+                        //     }
+                        // });
                     }
-                });
-            });
-        }).
-            catch((err) => {
+                }
+                console.log("Articles parsed");
+                return articles;
 
-                logger.addLog(klas, "Local sources cannot find", "No any local sources " + err);
+
+            }).then((list) => {
+
+
+                for (let i = 0; i < list.length; i++) {
+                    (function (name_now) {
+                            Article.findOne({ArticleId: name_now},
+                                function (err, doc) {
+                                    if (!err && !doc) {
+                                        let newArticle = new Article(list[i]);
+                                        newArticle.save(function (err) {
+                                            if (!err) {
+                                                logger.addLog(klas, "New article", "New article inserted. Article ID: " + list[i].ArticleId);
+
+                                            } else {
+                                                logger.addLog(klas, "New article not saved", "New article inserted. Article ID: " + list[i].ArticleId + " Error: " + err);
+
+                                            }
+                                        });
+
+                                    } else if (!err) {
+                                        //console.log("Person is in the system");
+
+                                    } else {
+                                        //console.log("ERROR: " + err);
+
+                                    }
+
+                                    if (i == list.length - 1) {
+
+                                        logger.addLog(klas, "Job Completed", "Articles saved");
+                                        console.log("Job Completed");
+                                    }
+                                }
+                            )
+                        }
+                    )(list[i].ArticleId);
+                }
+
+
 
             });
+
+        }).catch((err) => {
+
+            logger.addLog(klas, "Local sources cannot find", "No any local sources " + err);
+
+        });
 
     };
 
 
-    var job = new CronJob({
+    let job = new CronJob({
         cronTime: '00 */10 * * * *',
         onTick: function () {
 
-            console.log("Next Run: ", this.nextDates() );
+            console.log("Next Run: ", this.nextDates());
             readData();
+
+        },
+        onComplete: function () {
+            console.log("job bitti");
         },
         start: true,
-        runOnInit :true,
+        runOnInit: true,
     });
 
     job.start();
