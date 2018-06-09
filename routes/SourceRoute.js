@@ -82,6 +82,9 @@ router.put('/:id', (req, res, next) => {
         },
         {
             "SourceName": req.body.SourceName,
+            "Description": req.body.Description,
+            "ImageUrl": req.body.ImageUrl,
+            "SourceUrl": req.body.SourceUrl,
             "UpdatedAt": Date.now(),
             "Active": req.body.Active
         },

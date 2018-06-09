@@ -35,7 +35,7 @@ router.post('/', (req, res, next) => {
 
 router.get('/', (req, res, next) => {
 
-    const promise = Category.find({ Active: true }).sort({ CategoryName: 1 });
+    const promise = Category.find({}).sort({ CategoryName: 1 });
 
     promise.then((data) => {
         if (data.length === 0) {
