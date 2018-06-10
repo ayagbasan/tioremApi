@@ -72,13 +72,13 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.put('/:id', (req, res, next) => {
-    console.log(req.params.id, req.body);
+router.put('/', (req, res, next) => {
+    console.log(req.body);
     let opts = { runValidators: true, new: true };
 
     const promise = Category.findOneAndUpdate(
         {
-            _id: req.params.id
+            _id: req.body._id
         },
         {
             "CategoryName": req.body.CategoryName,
@@ -100,9 +100,9 @@ router.put('/:id', (req, res, next) => {
     });
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/', (req, res, next) => {
 
-    const id = req.params.id;
+    const id = req.body._id;
 
     const promise = Category.remove({ _id: id });
 
