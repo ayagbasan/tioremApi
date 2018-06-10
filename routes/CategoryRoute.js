@@ -10,13 +10,14 @@ router.get('/test', (req, res, next) => {
         res.json(response.setSuccess("Selamün aleyküm"));
     }
     catch (err) {
-        res.json(response.setError(err.statusCode, err.message, 'Category service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Category service error.'));
     };
 });
 
 
 router.post('/', (req, res, next) => {
 
+    console.log(req.body);
     req.body._id = new mongoose.Types.ObjectId();
     const category = new Category(req.body);
     const promise = category.save();
@@ -28,7 +29,7 @@ router.post('/', (req, res, next) => {
 
     }).catch((err) => {
 
-        res.json(response.setError(err.statusCode, err.message, 'Category service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Category service error.'));
 
     });
 });
@@ -39,14 +40,14 @@ router.get('/', (req, res, next) => {
 
     promise.then((data) => {
         if (data.length === 0) {
-            res.status(404).json(response.setError(99, null, 'Category list is empty'));
+            res.status(200).json(response.setError(99, null, 'Category list is empty'));
         } else {
             res.json(response.setSuccess(data));
         }
 
     }).catch((err) => {
 
-        res.json(response.setError(err.statusCode, err.message, 'Category service error.'))
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Category service error.'))
 
     });
 });
@@ -67,7 +68,7 @@ router.get('/:id', (req, res, next) => {
 
     }).catch((err) => {
 
-        res.json(response.setError(err.statusCode, err.message, 'Category service error.'))
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Category service error.'))
 
     });
 });
@@ -90,13 +91,13 @@ router.put('/', (req, res, next) => {
 
     promise.then((data) => {
         if (!data) {
-            next(res.json(response.setError(99, null, 'The category was not found.')));
+            res.status(400).json(response.setError(99, null, 'The category was not found.'));
 
         } else {
             res.json(response.setSuccess(data));
         }
     }).catch((err) => {
-        res.json(response.setError(err.statusCode, err.message, 'Category service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Category service error.'));
     });
 });
 
@@ -108,13 +109,13 @@ router.delete('/', (req, res, next) => {
 
     promise.then((data) => {
         if (!data) {
-            next(res.json(response.setError(99, null, 'The category was not found.')));
+            res.status(400).json(response.setError(99, null, 'The category was not found.'));
 
         } else {
             res.json(response.setSuccess(data));
         }
     }).catch((err) => {
-        res.json(response.setError(err.statusCode, err.message, 'Category service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Category service error.'));
     });
 });
 

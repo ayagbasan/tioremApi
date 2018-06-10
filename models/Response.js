@@ -1,17 +1,22 @@
-var Response = {
+let Response = {
 
 
     setSuccess: function (successData) {
 
-        var result = new Object();
+        let result = {};
         result.Data = successData;
+        if(Array.isArray(successData))
+            result.TotalCount= successData.length;
+        else
+            result.TotalCount=1;
+
         result.IsSuccess = true;
         return result;
     },
 
     setError: function (errCode, errMsg, customMsg) {
 
-        var result = new Object();
+        let result = {};
 
         result.IsSuccess = false;
         result.ErrorCode = errCode;
@@ -26,7 +31,7 @@ var Response = {
 
         return result;
     }
-}
+};
 
 
 

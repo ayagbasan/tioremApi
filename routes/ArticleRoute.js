@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const router = express.Router();
-var response = require('../models/Response');
+const response = require('../models/Response');
 
 const Article = require('../models/Article');
 const Source = require('../models/Catalogue/Source');
@@ -14,7 +14,7 @@ router.get('/test', (req, res, next) => {
         res.json(response.setSuccess("Selamün aleyküm"));
     }
     catch (err) {
-        res.json(response.setError(err.statusCode, err.message, 'Article service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Article service error.'));
     };
 });
 
@@ -30,7 +30,7 @@ router.post('/', (req, res, next) => {
 
     }).catch((err) => {
 
-        res.json(response.setError(err.statusCode, err.message, 'Article service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Article service error.'));
 
     });
 });
@@ -41,14 +41,14 @@ router.get('/', (req, res, next) => {
 
     promise.then((data) => {
         if (data.length === 0) {
-            res.status(404).json(response.setError(99, null, 'Article list is empty'));
+            res.status(400).json(response.setError(99, null, 'Article list is empty'));
         } else {
             res.json(response.setSuccess(data));
         }
 
     }).catch((err) => {
 
-        res.json(response.setError(err.statusCode, err.message, 'Article service error.'))
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Article service error.'))
 
     });
 });
@@ -61,7 +61,7 @@ router.get('/:id', (req, res, next) => {
     promise.then((data) => {
         if (!data) {
 
-            next(res.json(response.setError(99, null, 'The article was not found.')));
+            res.status(400).json(response.setError(99, null, 'The article was not found.'));
 
         } else {
             res.json(response.setSuccess(data));
@@ -69,7 +69,7 @@ router.get('/:id', (req, res, next) => {
 
     }).catch((err) => {
 
-        res.json(response.setError(err.statusCode, err.message, 'Article service error.'))
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Article service error.'))
 
     });
 });
@@ -110,13 +110,13 @@ router.put('/:id', (req, res, next) => {
 
     promise.then((data) => {
         if (!data) {
-            next(res.json(response.setError(99, null, 'The article was not found.')));
+            res.status(400).json(response.setError(99, null, 'The article was not found.'));
 
         } else {
             res.json(response.setSuccess(data));
         }
     }).catch((err) => {
-        res.json(response.setError(err.statusCode, err.message, 'Article service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Article service error.'));
     });
 });
 
@@ -128,13 +128,13 @@ router.delete('/:id', (req, res, next) => {
 
     promise.then((data) => {
         if (!data) {
-            next(res.json(response.setError(99, null, 'The article was not found.')));
+            res.status(400).json(response.setError(99, null, 'The article was not found.'));
 
         } else {
             res.json(response.setSuccess(data));
         }
     }).catch((err) => {
-        res.json(response.setError(err.statusCode, err.message, 'Article service error.'));
+       res.status(400).json(response.setError(err.statusCode, err.message, 'Article service error.'));
     });
 });
 

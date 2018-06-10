@@ -42,7 +42,7 @@ module.exports = () => {
                                 if (item.sourceId !== undefined && item.articleId != undefined) {
                                     readArticles.push(result.xml.articles.article[j]);
                                 } else {
-                                    logger.addLog(klas, "Article ID not found", "Article : " + JSON.stringify(item));
+                                    //logger.addLog(klas, "Article ID not found", "Article : " + JSON.stringify(item));
 
                                 }
                             }
@@ -109,21 +109,23 @@ module.exports = () => {
 
             }).then((list) => {
 
-
+                var count =0;
                 for (let i = 0; i < list.length; i++) {
                     (function (name_now) {
                             Article.findOne({ArticleId: name_now},
                                 function (err, doc) {
+
                                     if (!err && !doc) {
                                         let newArticle = new Article(list[i]);
                                         newArticle.save(function (err) {
                                             if (!err) {
-                                                logger.addLog(klas, "New article", "New article inserted. Article ID: " + list[i].ArticleId);
-
+                                                //logger.addLog(klas, "New article", "New article inserted. Article ID: " + list[i].ArticleId);
+                                                count++;
                                             } else {
-                                                logger.addLog(klas, "New article not saved", "New article inserted. Article ID: " + list[i].ArticleId + " Error: " + err);
+                                                //logger.addLog(klas, "New article not saved", "New article inserted. Article ID: " + list[i].ArticleId + " Error: " + err);
 
                                             }
+
                                         });
 
                                     } else if (!err) {
@@ -136,7 +138,7 @@ module.exports = () => {
 
                                     if (i == list.length - 1) {
 
-                                        logger.addLog(klas, "Job Completed", "Articles saved");
+                                        logger.addLog(klas, "Job Completed", count+ " Articles saved");
                                         console.log("Job Completed");
                                     }
                                 }

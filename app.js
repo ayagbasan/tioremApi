@@ -1,15 +1,14 @@
 const express = require('express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const loggerMorgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 // routers
 const sourceRoute = require('./routes/SourceRoute');
-const categoryRoute = require('./routes/CategoryRoute')
-const roleRoute = require('./routes/RoleRoute')
-const tagRoute = require('./routes/TagRoute')
+const categoryRoute = require('./routes/CategoryRoute');
+const roleRoute = require('./routes/RoleRoute');
+const tagRoute = require('./routes/TagRoute');
 
 
 const app = express();
@@ -19,8 +18,9 @@ const app = express();
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(loggerMorgan('dev'));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 

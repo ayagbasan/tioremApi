@@ -55,7 +55,7 @@ module.exports = () => {
                         SourceName: s.sourceName,
                         Description: s.sourceDescription.length>1?s.sourceDescription[0]:"",
                         ImageUrl: s.sourceImageUrl,
-                        SourceUrl: s.sourceUrl,
+                        SourceWebSite: s.sourceUrl,
                         SourceId: parseInt(s.sourceId),
                         Active:false
                     }
