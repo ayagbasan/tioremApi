@@ -95,7 +95,7 @@ router.put('/', (req, res, next) => {
         if (!data) {
             res.status(400).json(response.setError(99, null, 'The source was not found'));
         } else {
-            res.status(400).json(response.setSuccess(data));
+            res.json(response.setSuccess(data));
         }
     }).catch((err) => {
         res.status(400).json(response.setError(err.statusCode, err.message, 'Source service error.'));

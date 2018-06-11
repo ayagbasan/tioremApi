@@ -22,9 +22,11 @@ module.exports = () => {
 
         const urls = [];
 
+        let localSources = [];
         promise.then((data) => {
 
             data.forEach(source => {
+                localSources.push(source);
                 urls.push("http://nabizapp.com/app/v1.3/android_articles_by_source.php?source_id=" + source.SourceId);
             });
 
@@ -73,7 +75,7 @@ module.exports = () => {
                                 CategoryId: null,
                                 Tags: [],
                                 ArticleUrl: list[i].articleUrl,
-                                SourceUrl: list[i].sourceUrl,
+                                SourceWebSite: list[i].sourceUrl,
                                 Title: list[i].articleTitle,
                                 SharingTitle: list[i].articleSharingTitle,
                                 Body: list[i].articleBody,
@@ -86,6 +88,13 @@ module.exports = () => {
                                 ApprovedUserId: null,
                                 ApprovedAt: null
                             };
+
+                        for (let j = 0; j < localSources.length; j++) {
+                            if (localSources[j].SourceId === parseInt(list[i].sourceId)){
+                                tmp.SourceDBId =localSources[j]._id;
+                                break;
+                            }
+                        }
 
                         articles.push(tmp);
 
@@ -109,7 +118,7 @@ module.exports = () => {
 
             }).then((list) => {
 
-                var count =0;
+                var count = 0;
                 for (let i = 0; i < list.length; i++) {
                     (function (name_now) {
                             Article.findOne({ArticleId: name_now},
@@ -138,15 +147,14 @@ module.exports = () => {
 
                                     if (i == list.length - 1) {
 
-                                        logger.addLog(klas, "Job Completed", count+ " Articles saved");
-                                        console.log("Job Completed");
+                                        logger.addLog(klas, "Job Completed", count + " Articles saved");
+                                        console.log("Job Completed", count + " Articles saved");
                                     }
                                 }
                             )
                         }
                     )(list[i].ArticleId);
                 }
-
 
 
             });

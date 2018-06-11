@@ -1,9 +1,9 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const router = express.Router();
-var response = require('../models/Response');
-
+const response = require('../models/Response');
 const Tag = require('../models/Catalogue/Tag');
+const Article = require('../models/Article');
 
 router.get('/test', (req, res, next) => {
     try {
@@ -35,12 +35,13 @@ router.post('/', (req, res, next) => {
 
 router.get('/', (req, res, next) => {
 
-    const promise = Tag.find({ Active: true }).sort({ TagName: 1 });
+    const promise = Tag.find({}).sort({CreatedAt: -1});
 
     promise.then((data) => {
         if (data.length===0) {
            res.status(400).json(response.setError(99, null, 'Tag list is empty'));
         } else {
+
             res.json(response.setSuccess(data));
         }
 

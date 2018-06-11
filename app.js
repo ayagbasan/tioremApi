@@ -9,7 +9,7 @@ const sourceRoute = require('./routes/SourceRoute');
 const categoryRoute = require('./routes/CategoryRoute');
 const roleRoute = require('./routes/RoleRoute');
 const tagRoute = require('./routes/TagRoute');
-
+const articleRoute = require('./routes/ArticleRoute');
 
 const app = express();
 
@@ -66,6 +66,7 @@ app.set('view engine', 'jade');
 
 //app.use('/api', verifyToken);
 //app.use('/', global);
+app.use('/api/article', articleRoute);
 app.use('/api/source', sourceRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/tag', tagRoute);
