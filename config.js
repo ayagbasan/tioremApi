@@ -1,5 +1,5 @@
 module.exports = {
-    environment : "DEV",
+    environment : "PROD",
     api_secret_key: 'çok gizli anahtar',
 
 }; 
