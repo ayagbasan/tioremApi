@@ -30,8 +30,7 @@ const logger = require('./helper/logger.js');
 
 // Batch Jobs
 //const jobReadSources= require('./batchJob/readSources.js')();
-const jobReadArticle = require('./batchJob/readArticle.js')();
-
+const jobReadArticle = require('./batchJob/readArticle.js');
 
 const config = require('./config');
 app.set('api_secret_key', config.api_secret_key);

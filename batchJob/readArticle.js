@@ -8,9 +8,13 @@ const config = require('../config');
 const request = require('request-promise');
 const mongoose = require("mongoose");
 
-module.exports = () => {
 
-    let readData = function () {
+
+let JobArticle = {
+
+
+    readData: function () {
+
 
         console.log('job Running', config.environment);
 
@@ -90,8 +94,8 @@ module.exports = () => {
                             };
 
                         for (let j = 0; j < localSources.length; j++) {
-                            if (localSources[j].SourceId === parseInt(list[i].sourceId)){
-                                tmp.SourceDBId =localSources[j]._id;
+                            if (localSources[j].SourceId === parseInt(list[i].sourceId)) {
+                                tmp.SourceDBId = localSources[j]._id;
                                 break;
                             }
                         }
@@ -165,23 +169,26 @@ module.exports = () => {
 
         });
 
-    };
+    },
 
 
-    let job = new CronJob({
-        cronTime: '00 */10 * * * *',
-        onTick: function () {
 
-            console.log("Next Run: ", this.nextDates());
-            readData();
-
-        },
-        onComplete: function () {
-            console.log("job bitti");
-        },
-        start: true,
-        runOnInit: true,
-    });
-
-    job.start();
 };
+
+
+new CronJob({
+    cronTime: '00 */10 * * * *',
+    onTick: function () {
+
+        console.log("Next Run: ", this.nextDates());
+        JobArticle.readData();
+
+    },
+    onComplete: function () {
+        console.log("job bitti");
+    },
+    start: true,
+    runOnInit: true,
+});
+
+module.exports = JobArticle;

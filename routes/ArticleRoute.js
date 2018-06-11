@@ -6,7 +6,7 @@ const response = require('../models/Response');
 const Article = require('../models/Article');
 const Source = require('../models/Catalogue/Source');
 const Tag = require('../models/Catalogue/Tag');
-
+const jobArticles = require("../batchJob/readArticle");
 
 router.get('/test', (req, res, next) => {
     try {
@@ -261,6 +261,16 @@ router.post('/deleteTag/', (req, res, next) => {
         res.status(400).json(response.setError(err.statusCode, err.message, 'Article service error.'));
     });
 });
+
+router.post('/runBatchJob/', (req, res, next) => {
+
+
+    jobArticles.readData();
+    res.json(response.setSuccess("Article Job Completed"));
+
+
+});
+
 
 
 module.exports = router;
