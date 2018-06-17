@@ -114,8 +114,14 @@ router.get('/', (req, res, next) => {
 
 router.get('/:page/:limit', (req, res, next) => {
 
+    let pageNumber=1 , itemLimit=20;
+    if(req.params.page)
+        pageNumber = parseInt(req.params.page);
+    if(req.params.limit)
+        itemLimit = parseInt(req.params.limit);
 
-    const promise = Article.find({}, {Body: 0}).sort({CreatedAt: -1}).skip(req.params.page).limit(req.params.limit);
+
+    const promise = Article.find({}, {Body: 0}).sort({CreatedAt: -1}).skip(pageNumber).limit(itemLimit);
 
     promise.then((data) => {
         if (data.length === 0) {
