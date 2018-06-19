@@ -73,7 +73,7 @@ app.use('/api/source', sourceRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/tag', tagRoute);
 app.use('/api/role', roleRoute);
-app.use('api/googleNews',googleNewsRoute);
+app.use('/api/googleNews',googleNewsRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

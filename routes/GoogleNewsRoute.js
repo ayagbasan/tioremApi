@@ -2,9 +2,7 @@ const express = require('express');
 const mongoose = require("mongoose");
 const router = express.Router();
 const response = require('../models/Response');
-
 const GoogleNews = require('../models/GoogleNews');
-
 
 router.get('/', (req, res, next) => {
 

@@ -22,7 +22,7 @@ let JobGoogleRSS = {
             for (let i = 0; i < feed.items.length; i++) {
                 (function (_title, _clusterId) {
 
-                        console.log((_title, _clusterId));
+                        //console.log((_title, _clusterId));
                         GoogleNews.findOne({title: _title, clusterId: _clusterId},
                             function (err, doc) {
 
