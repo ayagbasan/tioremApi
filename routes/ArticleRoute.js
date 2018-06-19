@@ -37,7 +37,11 @@ router.post('/', (req, res, next) => {
 router.get('/', (req, res, next) => {
 
 
+    console.log(req.query);
     const promise = Article.aggregate([
+        {
+            $match: {"SourceId":"1"}
+        },
         {
             $lookup:
                 {
@@ -88,6 +92,7 @@ router.get('/', (req, res, next) => {
                     PubDate: 1,
                     Title: 1,
                     UpdatedAt: 1,
+                    SourceId: "$Source.SourceId",
                     SourceName: "$Source.SourceName",
                     SourceWebSite: "$Source.SourceWebSite",
                     SourceImageUrl: "$Source.ImageUrl",
@@ -114,16 +119,19 @@ router.get('/', (req, res, next) => {
 
 router.get('/:page/:limit', (req, res, next) => {
 
-    let pageNumber=1 , itemLimit=20;
-    if(req.params.page)
+    let pageNumber = 1, itemLimit = 20;
+    if (req.params.page)
         pageNumber = parseInt(req.params.page);
-    if(req.params.limit)
+    if (req.params.limit)
         itemLimit = parseInt(req.params.limit);
 
 
-    const promise = Article.find({}, {Body: 0}).sort({CreatedAt: -1}).skip(pageNumber).limit(itemLimit);
+    const promise = Article.find({}, {Body: 0});
 
     promise.then((data) => {
+
+        let test = data.length;
+        console.log(test);
         if (data.length === 0) {
             res.status(400).json(response.setError(99, null, 'Article list is empty'));
         } else {
@@ -276,7 +284,6 @@ router.post('/runBatchJob/', (req, res, next) => {
 
 
 });
-
 
 
 module.exports = router;

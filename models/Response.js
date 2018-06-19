@@ -5,10 +5,13 @@ let Response = {
 
         let result = {};
         result.Data = successData;
-        if(Array.isArray(successData))
-            result.TotalCount= successData.length;
-        else
-            result.TotalCount=1;
+        if(!result.TotalCount)
+        {
+            if(Array.isArray(successData))
+                result.TotalCount= successData.length;
+            else
+                result.TotalCount=1;
+        }
 
         result.IsSuccess = true;
         return result;

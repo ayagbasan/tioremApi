@@ -36,7 +36,9 @@ router.post('/', (req, res, next) => {
 
 router.get('/', (req, res, next) => {
 
-    const promise = Source.find({}).sort({ SourceName: 1 });
+    console.log(req.query);
+
+    const promise = Source.find(req.query).sort({ SourceName: 1 });
 
     promise.then((data) => {
         if (data.length===0) {
