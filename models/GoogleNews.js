@@ -24,7 +24,13 @@ var GoogleNewsSchema = new Schema(
         pubDate: {
             type: String,
         },
-        description: {
+        isoDate: {
+            type: Date,
+        },
+        content: {
+            type: String,
+        },
+        contentSnippet: {
             type: String,
         },
         createdAt:

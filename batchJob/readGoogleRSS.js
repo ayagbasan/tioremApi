@@ -27,6 +27,8 @@ let JobGoogleRSS = {
                             function (err, doc) {
 
                                 if (!err && !doc) {
+
+                                    console.log(feed.items[i]);
                                     let newNews = new GoogleNews(feed.items[i]);
                                     newNews.clusterId = JobGoogleRSS.getClusterId(newNews.guid);
                                     newNews._id = new mongoose.Types.ObjectId();
