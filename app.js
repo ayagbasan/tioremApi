@@ -10,6 +10,7 @@ const categoryRoute = require('./routes/CategoryRoute');
 const roleRoute = require('./routes/RoleRoute');
 const tagRoute = require('./routes/TagRoute');
 const articleRoute = require('./routes/ArticleRoute');
+const googleNewsRoute = require('./routes/GoogleNewsRoute');
 
 const app = express();
 
@@ -72,6 +73,7 @@ app.use('/api/source', sourceRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/tag', tagRoute);
 app.use('/api/role', roleRoute);
+api.use('api/googleNews',googleNewsRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
